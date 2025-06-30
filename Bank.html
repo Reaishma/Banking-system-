@@ -1,0 +1,438 @@
+<!Doctype html>
+<html>
+<head>
+  <title>Simple Banking System</title>
+  <style>
+  
+/* Background image and base styles */
+
+    body {
+  margin: 0;
+  padding: 25px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #2c3e50;
+  background: url('https://images.unsplash.com/photo-1507679799987-c73779587ccf?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80') no-repeat center center fixed;
+  background-size: cover;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.container {
+  background: rgba(255, 255, 255, 0.98);
+  border-radius: 15px;
+  padding: 40px 50px;
+  max-width: 720px;
+  width: 100%;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.25);
+  margin-bottom: 20px;
+}
+
+.title {
+  color: #34495e;
+  margin-bottom: 40px;
+  text-align: center;
+  font-weight: 900;
+  font-size: 3rem;
+  letter-spacing: 2px;
+  text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.balance-container {
+  background: #f0f4f8;
+  border-radius: 12px;
+  box-shadow: inset 0 0 8px #d6dbe6;
+  padding: 30px 20px;
+  margin-bottom: 40px;
+  text-align: center;
+}
+
+.balance-container h2 {
+  font-size: 2.4rem;
+  font-weight: 900;
+  color: #2c3e50;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.transaction-container h2,
+.history-container h2 {
+  color: #34495e;
+  margin-bottom: 25px;
+  border-bottom: 3px solid #5c6ac4;
+  padding-bottom: 8px;
+  font-weight: 700;
+  font-size: 1.7rem;
+}
+
+form {
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px 25px;
+  margin-bottom: 25px;
+  box-shadow: 0 6px 18px rgba(92, 106, 196, 0.15);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  align-items: center;
+  transition: box-shadow 0.3s ease;
+}
+
+form:hover {
+  box-shadow: 0 10px 30px rgba(92, 106, 196, 0.3);
+}
+
+form h3 {
+  flex-basis: 100%;
+  margin-bottom: 15px;
+  color: #5c6ac4;
+  font-weight: 700;
+  font-size: 1.3rem;
+}
+
+input[type="number"],
+input[type="text"] {
+  flex-grow: 1;
+  min-width: 180px;
+  padding: 14px 16px;
+  border: 2px solid #5c6ac4;
+  border-radius: 10px;
+  font-size: 1.05rem;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  box-sizing: border-box;
+}
+
+input[type="number"]:focus,
+input[type="text"]:focus {
+  border-color: #32418f;
+  outline: none;
+  box-shadow: 0 0 8px #32418faa;
+}
+
+button {
+  padding: 14px 30px;
+  border: none;
+  border-radius: 10px;
+  background-color: #5c6ac4;
+  color: white;
+  font-weight: 700;
+  font-size: 1.1rem;
+  cursor: pointer;
+  box-shadow: 0 6px 18px rgba(92, 106, 196, 0.7);
+  transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
+  min-width: 150px;
+  flex-shrink: 0;
+}
+
+button:hover {
+  background-color: #32418f;
+  box-shadow: 0 8px 24px rgba(50, 65, 143, 0.9);
+  transform: translateY(-3px);
+}
+
+.error {
+  color: #d93025;
+  font-weight: 600;
+  font-size: 0.95rem;
+  flex-basis: 100%;
+  margin-left: 4px;
+  margin-top: -6px;
+  min-height: 20px;
+}
+
+.history-container {
+  margin-top: 35px;
+}
+
+ul#transaction-history {
+  max-height: 280px;
+  overflow-y: auto;
+  padding-left: 20px;
+  margin-top: 10px;
+  font-size: 1rem;
+  color: #2c3e50;
+  background: #f7f9fc;
+  border-radius: 12px;
+  box-shadow: inset 0 0 10px #cbd6e2;
+  list-style-type: disc;
+}
+
+ul#transaction-history li {
+  margin-bottom: 10px;
+  border-bottom: 1px solid #d2dce6;
+  padding-bottom: 8px;
+}
+
+ul#transaction-history li:last-child {
+  border-bottom: none;
+}
+
+ul#transaction-history::-webkit-scrollbar {
+  width: 10px;
+}
+
+ul#transaction-history::-webkit-scrollbar-track {
+  background: #e7eaf1;
+  border-radius: 12px;
+}
+
+ul#transaction-history::-webkit-scrollbar-thumb {
+  background-color: #5c6ac4;
+  border-radius: 12px;
+  border: 2px solid #e7eaf1;
+}
+
+@media (max-width: 600px) {
+  .container {
+    padding: 25px 30px;
+  }
+  input[type="number"],
+  input[type="text"] {
+    width: 100%;
+    flex-grow: unset;
+  }
+  form {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  button {
+    width: 100%;
+    min-width: unset;
+    flex-shrink: unset;
+  }
+  .error {
+    margin-left: 0;
+  }
+}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1 class="title">Simple Banking System</h1>
+    <div class="balance-container">
+      <h2>Balance: $<span id="balance">1000</span></h2>
+    </div>
+    <div class="transaction-container">
+      <h2>Transactions</h2>
+      <form id="deposit-form" onsubmit="return false;">
+        <h3>Deposit</h3>
+        <input type="number" id="deposit-amount" placeholder="Amount" min="1" />
+        <button id="deposit-btn" type="button">Deposit</button>
+        <span id="deposit-error" class="error"></span>
+      </form>
+      <form id="withdraw-form" onsubmit="return false;">
+        <h3>Withdraw</h3>
+        <input type="number" id="withdraw-amount" placeholder="Amount" min="1" />
+        <button id="withdraw-btn" type="button">Withdraw</button>
+        <span id="withdraw-error" class="error"></span>
+      </form>
+      <form id="transfer-form" onsubmit="return false;">
+        <h3>Transfer</h3>
+        <input type="number" id="transfer-amount" placeholder="Amount" min="1" />
+        <input type="text" id="transfer-account" placeholder="Account Number" />
+        <button id="transfer-btn" type="button">Transfer</button>
+        <span id="transfer-error" class="error"></span>
+      </form>
+      <form id="billpay-form" onsubmit="return false;">
+  <h3>Bill Payment</h3>
+  <input type="text" id="billpay-biller" placeholder="Biller Name" />
+  <input type="number" id="billpay-amount" placeholder="Amount" min="1" />
+  <button id="billpay-btn" type="button">Pay Bill</button>
+  <span id="billpay-error" class="error"></span>
+</form>
+
+<form id="checkdeposit-form" onsubmit="return false;">
+  <h3>Deposit Check</h3>
+  <input type="text" id="check-number" placeholder="Check Number" />
+  <input type="number" id="check-amount" placeholder="Amount" min="1" />
+  <button id="checkdeposit-btn" type="button">Deposit Check</button>
+  <span id="checkdeposit-error" class="error"></span>
+</form>
+
+<form id="loanrequest-form" onsubmit="return false;">
+  <h3>Request Loan</h3>
+  <input type="number" id="loan-amount" placeholder="Amount" min="1" />
+  <button id="loanrequest-btn" type="button">Request Loan</button>
+  <span id="loanrequest-error" class="error"></span>
+</form>
+<form id="interest-form" onsubmit="return false;">
+  <h3>Calculate Interest</h3>
+  <input type="number" id="interest-rate" placeholder="Interest Rate (%)" min="0" step="0.01" />
+  <button id="interest-btn" type="button">Calculate Interest</button>
+  <span id="interest-error" class="error"></span>
+  <p id="interest-result" style="margin-top:10px; font-weight:600; color:#32418f;"></p>
+</form>
+    </div>
+    <div class="history-container">
+      <h2>Transaction History</h2>
+      <ul id="transaction-history"></ul>
+    </div>
+  </div>
+
+  <script>
+    let balance = 1000;
+    let transactionHistory = [];
+
+    const balanceEl = document.getElementById('balance');
+    const depositError = document.getElementById('deposit-error');
+    const withdrawError = document.getElementById('withdraw-error');
+    const transferError = document.getElementById('transfer-error');
+    const transactionHistoryEl = document.getElementById('transaction-history');
+    const interestError = document.getElementById('interest-error');
+const interestResult = document.getElementById('interest-result');
+
+document.getElementById('interest-btn').addEventListener('click', () => {
+  interestError.textContent = '';
+  interestResult.textContent = '';
+  const rate = parseFloat(document.getElementById('interest-rate').value);
+  if (isNaN(rate) || rate < 0) {
+    interestError.textContent = 'Invalid interest rate';
+    return;
+  }
+  // Calculate interest for 1 year on current balance
+  const interest = (balance * rate) / 100;
+  const newBalance = balance + interest;
+  interestResult.textContent = `Interest: $${interest.toFixed(2)} | New Balance: $${newBalance.toFixed(2)}`;
+});
+    function updateBalance() {
+      balanceEl.textContent = balance.toFixed(2);
+    }
+function updateTransactionHistory() {
+      transactionHistoryEl.innerHTML = '';
+      transactionHistory.forEach(t => {
+        const li = document.createElement('li');
+        li.textContent = t;
+        transactionHistoryEl.appendChild(li);
+      });
+    }
+
+    document.getElementById('deposit-btn').addEventListener('click', () => {
+      const amount = parseFloat(document.getElementById('deposit-amount').value);
+      depositError.textContent = '';
+      if (isNaN(amount) || amount <= 0) {
+        depositError.textContent = 'Invalid amount';
+        return;
+      }
+      balance += amount;
+      transactionHistory.push(`Deposited: $${amount.toFixed(2)}`);
+      updateBalance();
+      updateTransactionHistory();
+      document.getElementById('deposit-amount').value = '';
+    });
+
+    document.getElementById('withdraw-btn').addEventListener('click', () => {
+      const amount = parseFloat(document.getElementById('withdraw-amount').value);
+      withdrawError.textContent = '';
+      if (isNaN(amount) || amount <= 0) {
+        withdrawError.textContent = 'Invalid amount';
+        return;
+      }
+      if (amount > balance) {
+        withdrawError.textContent = 'Insufficient funds';
+        return;
+      }
+      balance -= amount;
+      transactionHistory.push(`Withdrawn: $${amount.toFixed(2)}`);
+      updateBalance();
+      updateTransactionHistory();
+      document.getElementById('withdraw-amount').value = '';
+    });
+
+    document.getElementById('transfer-btn').addEventListener('click', () => {
+      const amount = parseFloat(document.getElementById('transfer-amount').value);
+      const accountNumber = document.getElementById('transfer-account').value.trim();
+      transferError.textContent = '';
+      if (isNaN(amount) || amount <= 0) {
+        transferError.textContent = 'Invalid amount';
+        return;
+      }
+      if (!accountNumber) {
+        transferError.textContent = 'Account number required';
+        return;
+      }
+      if (amount > balance) {
+        transferError.textContent = 'Insufficient funds';
+        return;
+      }
+      balance -= amount;
+      transactionHistory.push(`Transferred $${amount.toFixed(2)} to account ${accountNumber}`);
+      updateBalance();
+      updateTransactionHistory();
+      document.getElementById('transfer-amount').value = '';
+      document.getElementById('transfer-account').value = '';
+    });
+    document.getElementById('billpay-btn').addEventListener('click', () => {
+  const biller = document.getElementById('billpay-biller').value.trim();
+  const amount = parseFloat(document.getElementById('billpay-amount').value);
+  const error = document.getElementById('billpay-error');
+  error.textContent = '';
+
+  if (!biller) {
+    error.textContent = 'Biller name required';
+    return;
+  }
+  if (isNaN(amount) || amount <= 0) {
+    error.textContent = 'Invalid amount';
+    return;
+  }
+  if (amount > balance) {
+    error.textContent = 'Insufficient funds';
+    return;
+  }
+
+  balance -= amount;
+  transactionHistory.push(`Paid bill of $${amount.toFixed(2)} to ${biller}`);
+  updateBalance();
+  updateTransactionHistory();
+
+  document.getElementById('billpay-biller').value = '';
+  document.getElementById('billpay-amount').value = '';
+});
+
+document.getElementById('checkdeposit-btn').addEventListener('click', () => {
+  const checkNumber = document.getElementById('check-number').value.trim();
+  const amount = parseFloat(document.getElementById('check-amount').value);
+  const error = document.getElementById('checkdeposit-error');
+  error.textContent = '';
+
+  if (!checkNumber) {
+    error.textContent = 'Check number required';
+    return;
+  }
+  if (isNaN(amount) || amount <= 0) {
+    error.textContent = 'Invalid amount';
+    return;
+  }
+
+  balance += amount;
+  transactionHistory.push(`Deposited check #${checkNumber} for $${amount.toFixed(2)}`);
+  updateBalance();
+  updateTransactionHistory();
+
+  document.getElementById('check-number').value = '';
+  document.getElementById('check-amount').value = '';
+});
+
+document.getElementById('loanrequest-btn').addEventListener('click', () => {
+  const amount = parseFloat(document.getElementById('loan-amount').value);
+  const error = document.getElementById('loanrequest-error');
+  error.textContent = '';
+
+  if (isNaN(amount) || amount <= 0) {
+    error.textContent = 'Invalid amount';
+    return;
+  }
+
+  // For simplicity, just add the loan amount to balance immediately
+  balance += amount;
+  transactionHistory.push(`Loan requested and credited: $${amount.toFixed(2)}`);
+  updateBalance();
+  updateTransactionHistory();
+
+  document.getElementById('loan-amount').value = '';
+});
+updateBalance();
+ 
+  </script>
+</body>
+</html>
