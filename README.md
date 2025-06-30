@@ -5,7 +5,7 @@
 A banking system built with HTML, CSS, and JavaScript.
 
 *Description:*
-This project is a banking system that allows users to perform  transactions, such as deposits, withdrawals, and transfers. The system is built using HTML, CSS, and JavaScript, and is designed to be user-friendly and easy to use.
+This project is a banking system that allows users to perform  transactions, such as deposits, withdrawals, transfers,pay bills,loan request,loan interest calculation,pay checks. The system is built using HTML, CSS, and JavaScript, and is designed to be user-friendly and easy to use.
 
 *Tools:*
 
@@ -16,6 +16,7 @@ This project is a banking system that allows users to perform  transactions, suc
 *Features:*
 
 - transaction functionality (deposits, withdrawals, transfers)
+- pay bills, loan request, interest calculation, transaction history with date and time.
 - User-friendly interface
 - Transaction history
 
