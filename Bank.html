@@ -1,267 +1,297 @@
-<!Doctype html>
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <title>Simple Banking System</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Secure Banking System</title>
   <style>
-  
-/* Background image and base styles */
-
+    /* Base Styles */
     body {
-  margin: 0;
-  padding: 25px;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  color: #2c3e50;
-  background: url('https://images.unsplash.com/photo-1507679799987-c73779587ccf?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80') no-repeat center center fixed;
-  background-size: cover;
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-}
+      margin: 0; padding: 25px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: #2c3e50; background: url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80') no-repeat center center fixed;
+      background-size: cover; min-height: 100vh; display: flex; justify-content: center; align-items: flex-start;
+    }
+    .container, .login-container, .register-container, .profile-container, .mfa-container, .chatbot-container {
+      background: rgba(255, 255, 255, 0.98); border-radius: 15px; padding: 40px 50px;
+      max-width: 720px; width: 100%; box-shadow: 0 16px 40px rgba(0, 0, 0, 0.25);
+      margin-bottom: 20px; box-sizing: border-box;
+    }
+    .login-container, .register-container, .mfa-container { max-width: 450px; text-align: center; }
+    .title, .login-title, .register-title, .mfa-title, .profile-title {
+      color: #34495e; margin-bottom: 30px; text-align: center; font-weight: 700; font-size: 2rem;
+    }
+    .title { font-size: 3rem; letter-spacing: 2px; text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.1); }
+    /* Form Elements */
+    form {
+      background: #fff; border-radius: 12px; padding: 20px 25px; margin-bottom: 25px;
+      box-shadow: 0 6px 18px rgba(92, 106, 196, 0.15); display: flex; flex-wrap: wrap; gap: 15px; align-items: center;
+      transition: box-shadow 0.3s ease;
+    }
+    form:hover { box-shadow: 0 10px 30px rgba(92, 106, 196, 0.3); }
+    input[type="number"], input[type="text"], input[type="password"], input[type="email"], select {
+      flex-grow: 1; min-width: 180px; padding: 14px 16px; border: 2px solid #5c6ac4; border-radius: 10px;
+      font-size: 1.05rem; transition: border-color 0.3s ease, box-shadow 0.3s ease; box-sizing: border-box;
+    }
+    .login-container input, .register-container input, .mfa-container input, .profile-container input, .profile-container select {
+      width: 100%; margin-bottom: 15px;
+    }
+    input:focus, select:focus { border-color: #32418f; outline: none; box-shadow: 0 0 8px #32418faa; }
+    button {
+      padding: 14px 30px; border: none; border-radius: 10px; background-color: #5c6ac4; color: white;
+      font-weight: 700; font-size: 1.1rem; cursor: pointer; box-shadow: 0 6px 18px rgba(92, 106, 196, 0.7);
+      transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease; min-width: 150px; flex-shrink: 0;
+    }
+    .login-container button, .register-container button, .mfa-container button { width: 100%; }
+    button:hover { background-color: #32418f; box-shadow: 0 8px 24px rgba(50, 65, 143, 0.9); transform: translateY(-3px); }
+    button:disabled { background-color: #95a5a6; cursor: not-allowed; transform: none; }
+    .error { color: #d93025; font-weight: 600; font-size: 0.95rem; flex-basis: 100%; margin-left: 4px; margin-top: -6px; min-height: 20px; }
+    .success { color: #27ae60; font-weight: 600; font-size: 0.95rem; flex-basis: 100%; margin-left: 4px; margin-top: -6px; min-height: 20px; }
+    .hidden { display: none !important; }
+    
+    .balance-container {
+      background: #f0f4f8; border-radius: 12px; box-shadow: inset 0 0 8px #d6dbe6;
+      padding: 30px 20px; margin-bottom: 40px; text-align: center;
+    }
+    .balance-container h2 {
+      font-size: 2.4rem; font-weight: 900; color: #2c3e50; text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+    }
+    .user-info {
+      background: #e8f4fd; border-radius: 8px; padding: 15px; margin-bottom: 20px;
+      text-align: center; font-weight: 600; color: #2c3e50; display: flex;
+      justify-content: space-between; align-items: center;
+    }
+    .user-info span { flex-grow: 1; text-align: left; }
+    .logout-btn { background-color: #e74c3c; padding: 8px 16px; font-size: 0.9rem; margin-left: 10px; }
+    .logout-btn:hover { background-color: #c0392b; }
+    .profile-btn { background-color: #5c6ac4; padding: 8px 16px; font-size: 0.9rem; margin-left: 10px; }
+    .profile-btn:hover { background-color: #32418f; }
+  
+    .transaction-container h2, .history-container h2 {
+      color: #34495e; margin-bottom: 25px; border-bottom: 3px solid #5c6ac4; padding-bottom: 8px;
+      font-weight: 700; font-size: 1.7rem;
+    }
+    ul#transaction-history {
+      max-height: 280px; overflow-y: auto; padding-left: 20px; margin-top: 10px;
+      font-size: 1rem; color: #2c3e50; background: #f7f9fc; border-radius: 12px;
+      box-shadow: inset 0 0 10px #cbd6e2; list-style-type: disc;
+    }
+    ul#transaction-history li { margin-bottom: 10px; border-bottom: 1px solid #d2dce6; padding-bottom: 8px; }
+    ul#transaction-history li:last-child { border-bottom: none; }
+    /* Scrollbar styles for history */
+    ul#transaction-history::-webkit-scrollbar { width: 10px; }
+    ul#transaction-history::-webkit-scrollbar-track { background: #e7eaf1; border-radius: 12px; }
+    ul#transaction-history::-webkit-scrollbar-thumb { background-color: #5c6ac4; border-radius: 12px; border: 2px solid #e7eaf1; }
 
-.container {
-  background: rgba(255, 255, 255, 0.98);
-  border-radius: 15px;
-  padding: 40px 50px;
-  max-width: 720px;
-  width: 100%;
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.25);
-  margin-bottom: 20px;
-}
+    /* Modals */
+    .modal {
+      display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%;
+      background-color: rgba(0, 0, 0, 0.5); display: flex; justify-content: center; align-items: center;
+    }
+    .modal-content {
+      background-color: #fefefe; padding: 20px; border-radius: 10px; width: 300px;
+      text-align: center; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    }
+    .modal-buttons { margin-top: 20px; }
+    .modal-buttons button { margin: 0 10px; padding: 8px 16px; min-width: 80px; }
+    .confirm-btn { background-color: #27ae60; }
+    .confirm-btn:hover { background-color: #219a52; }
+    .cancel-btn { background-color: #95a5a6; }
+    .cancel-btn:hover { background-color: #7f8c8d; }
 
-.title {
-  color: #34495e;
-  margin-bottom: 40px;
-  text-align: center;
-  font-weight: 900;
-  font-size: 3rem;
-  letter-spacing: 2px;
-  text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.1);
-}
+    /* Notifications */
+    .notification {
+      position: fixed; top: 20px; right: 20px; padding: 15px 20px; border-radius: 8px;
+      color: white; font-weight: 600; z-index: 1001; opacity: 0; transform: translateX(100%);
+      transition: all 0.3s ease;
+    }
+    .notification.show { opacity: 1; transform: translateX(0); }
+    .notification.success { background-color: #27ae60; }
+    .notification.error { background-color: #e74c3c; }
+ 
+   /* Chatbot specific styles */
+    .chatbot-container {
+      position: fixed; bottom: 25px; right: 25px; width: 350px; height: 450px;
+      background: rgba(255, 255, 255, 0.98); border-radius: 15px; box-shadow: 0 16px 40px rgba(0, 0, 0, 0.25);
+      display: flex; flex-direction: column; z-index: 999; overflow: hidden;
+    }
+    .chatbot-header {
+      background-color: #5c6ac4; color: white; padding: 15px 20px; border-top-left-radius: 15px;
+      border-top-right-radius: 15px; display: flex; justify-content: space-between;
+      align-items: center; font-size: 1.1rem; font-weight: 600;
+    }
+    .chatbot-header h2 { margin: 0; font-size: 1.3rem; }
+    .close-chatbot-btn { background: none; border: none; color: white; font-size: 1.8rem; cursor: pointer; padding: 0 5px; }
+    .close-chatbot-btn:hover { color: #ccc; }
+    .chatbot-messages {
+      flex-grow: 1; padding: 20px; overflow-y: auto; background-color: #f0f4f8; border-bottom: 1px solid #d2dce6;
+    }
+    .message { margin-bottom: 15px; padding: 10px 15px; border-radius: 15px; max-width: 80%; word-wrap: break-word; font-size: 0.95rem; }
+    .user-message { background-color: #5c6ac4; color: white; align-self: flex-end; margin-left: auto; border-bottom-right-radius: 2px; }
+    .bot-message { background-color: #e6e8eb; color: #34495e; align-self: flex-start; margin-right: auto; border-bottom-left-radius: 2px; }
+    /* Scrollbar for chat messages */
+    .chatbot-messages::-webkit-scrollbar { width: 8px; }
+    .chatbot-messages::-webkit-scrollbar-track { background: #e7eaf1; border-radius: 8px; }
+    .chatbot-messages::-webkit-scrollbar-thumb { background-color: #8c9bcc; border-radius: 8px; border: 2px solid #e7eaf1; }
+    .chatbot-input { display: flex; padding: 15px; background-color: #fff; border-bottom-left-radius: 15px; border-bottom-right-radius: 15px; }
+    .chatbot-input input { flex-grow: 1; border: 1px solid #ccc; border-radius: 20px; padding: 10px 15px; margin-right: 10px; font-size: 1rem; }
+    .chatbot-input button { padding: 10px 20px; border-radius: 20px; background-color: #5c6ac4; color: white; font-weight: 600; cursor: pointer; box-shadow: none; transition: background-color 0.2s ease; min-width: unset; }
+    .chatbot-input button:hover { background-color: #32418f; transform: none; box-shadow: none; }
+    .open-chatbot-btn {
+      position: fixed; bottom: 25px; right: 25px; background-color: #27ae60; color: white;
+      border: none; border-radius: 50%; width: 60px; height: 60px; font-size: 2rem;
+      display: flex; justify-content: center; align-items: center; cursor: pointer;
+      box-shadow: 0 8px 20px rgba(39, 174, 96, 0.4); z-index: 998; transition: all 0.2s ease;
+    }
+    .open-chatbot-btn:hover { background-color: #219a52; transform: translateY(-2px); box-shadow: 0 10px 25px rgba(39, 174, 96, 0.6); }
 
-.balance-container {
-  background: #f0f4f8;
-  border-radius: 12px;
-  box-shadow: inset 0 0 8px #d6dbe6;
-  padding: 30px 20px;
-  margin-bottom: 40px;
-  text-align: center;
-}
-
-.balance-container h2 {
-  font-size: 2.4rem;
-  font-weight: 900;
-  color: #2c3e50;
-  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
-}
-
-.transaction-container h2,
-.history-container h2 {
-  color: #34495e;
-  margin-bottom: 25px;
-  border-bottom: 3px solid #5c6ac4;
-  padding-bottom: 8px;
-  font-weight: 700;
-  font-size: 1.7rem;
-}
-
-form {
-  background: #fff;
-  border-radius: 12px;
-  padding: 20px 25px;
-  margin-bottom: 25px;
-  box-shadow: 0 6px 18px rgba(92, 106, 196, 0.15);
-  display: flex;
-  flex-wrap: wrap;
-  gap: 15px;
-  align-items: center;
-  transition: box-shadow 0.3s ease;
-}
-
-form:hover {
-  box-shadow: 0 10px 30px rgba(92, 106, 196, 0.3);
-}
-
-form h3 {
-  flex-basis: 100%;
-  margin-bottom: 15px;
-  color: #5c6ac4;
-  font-weight: 700;
-  font-size: 1.3rem;
-}
-
-input[type="number"],
-input[type="text"] {
-  flex-grow: 1;
-  min-width: 180px;
-  padding: 14px 16px;
-  border: 2px solid #5c6ac4;
-  border-radius: 10px;
-  font-size: 1.05rem;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
-  box-sizing: border-box;
-}
-
-input[type="number"]:focus,
-input[type="text"]:focus {
-  border-color: #32418f;
-  outline: none;
-  box-shadow: 0 0 8px #32418faa;
-}
-
-button {
-  padding: 14px 30px;
-  border: none;
-  border-radius: 10px;
-  background-color: #5c6ac4;
-  color: white;
-  font-weight: 700;
-  font-size: 1.1rem;
-  cursor: pointer;
-  box-shadow: 0 6px 18px rgba(92, 106, 196, 0.7);
-  transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
-  min-width: 150px;
-  flex-shrink: 0;
-}
-
-button:hover {
-  background-color: #32418f;
-  box-shadow: 0 8px 24px rgba(50, 65, 143, 0.9);
-  transform: translateY(-3px);
-}
-
-.error {
-  color: #d93025;
-  font-weight: 600;
-  font-size: 0.95rem;
-  flex-basis: 100%;
-  margin-left: 4px;
-  margin-top: -6px;
-  min-height: 20px;
-}
-
-.history-container {
-  margin-top: 35px;
-}
-
-ul#transaction-history {
-  max-height: 280px;
-  overflow-y: auto;
-  padding-left: 20px;
-  margin-top: 10px;
-  font-size: 1rem;
-  color: #2c3e50;
-  background: #f7f9fc;
-  border-radius: 12px;
-  box-shadow: inset 0 0 10px #cbd6e2;
-  list-style-type: disc;
-}
-
-ul#transaction-history li {
-  margin-bottom: 10px;
-  border-bottom: 1px solid #d2dce6;
-  padding-bottom: 8px;
-}
-
-ul#transaction-history li:last-child {
-  border-bottom: none;
-}
-
-ul#transaction-history::-webkit-scrollbar {
-  width: 10px;
-}
-
-ul#transaction-history::-webkit-scrollbar-track {
-  background: #e7eaf1;
-  border-radius: 12px;
-}
-
-ul#transaction-history::-webkit-scrollbar-thumb {
-  background-color: #5c6ac4;
-  border-radius: 12px;
-  border: 2px solid #e7eaf1;
-}
-
-@media (max-width: 600px) {
-  .container {
-    padding: 25px 30px;
-  }
-  input[type="number"],
-  input[type="text"] {
-    width: 100%;
-    flex-grow: unset;
-  }
-  form {
-    flex-direction: column;
-    align-items: stretch;
-  }
-  button {
-    width: 100%;
-    min-width: unset;
-    flex-shrink: unset;
-  }
-  .error {
-    margin-left: 0;
-  }
-}
+    /* Media Queries */
+    @media (max-width: 600px) {
+      .container, .login-container, .register-container, .profile-container, .mfa-container { padding: 25px 30px; }
+      input[type="number"], input[type="text"], input[type="email"], input[type="password"], select { width: 100%; flex-grow: unset; }
+      form { flex-direction: column; align-items: stretch; }
+      button { width: 100%; min-width: unset; flex-shrink: unset; }
+      .error, .success { margin-left: 0; }
+      .user-info { flex-direction: column; align-items: flex-start; }
+      .user-info button { margin-top: 10px; margin-left: 0; width: auto; }
+      .chatbot-container { width: 100%; height: 100%; bottom: 0; right: 0; border-radius: 0; }
+      .open-chatbot-btn { bottom: 20px; right: 20px; width: 50px; height: 50px; font-size: 1.8rem; }
+    }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1 class="title">Simple Banking System</h1>
-    <div class="balance-container">
-      <h2>Balance: $<span id="balance">1000</span></h2>
+  <div id="login-screen" class="login-container">
+    <h1 class="login-title">Secure Bank Login</h1>
+    <form id="login-form" onsubmit="return false;">
+      <input type="text" id="username-login" placeholder="Username" required autocomplete="username" />
+      <input type="password" id="password-login" placeholder="Password" required autocomplete="current-password" />
+      <button id="login-btn" type="button">Login</button>
+      <span id="login-error" class="error"></span>
+    </form>
+    <p style="margin-top: 20px; font-size: 0.9rem; color: #7f8c8d;">
+      New user? <a href="#" id="show-register">Register here</a>
+    </p>
+  </div>
+
+  <div id="register-screen" class="register-container hidden">
+    <h1 class="register-title">Register for Secure Bank</h1>
+    <form id="register-form" onsubmit="return false;">
+      <input type="text" id="username-register" placeholder="Choose Username" required autocomplete="new-username" />
+      <input type="email" id="email-register" placeholder="Email Address" required autocomplete="email" />
+      <input type="password" id="password-register" placeholder="Create Password" required autocomplete="new-password" minlength="8" />
+      <input type="password" id="password-confirm" placeholder="Confirm Password" required autocomplete="new-password" />
+      <button id="register-btn" type="button">Register</button>
+      <span id="register-error" class="error"></span>
+    </form>
+    <p style="margin-top: 20px; font-size: 0.9rem; color: #7f8c8d;">
+      Already have an account? <a href="#" id="show-login">Login here</a>
+    </p>
+  </div>
+
+  <div id="mfa-screen" class="mfa-container hidden">
+    <h1 class="mfa-title">Two-Factor Authentication</h1>
+    <p style="margin-bottom: 20px; color: #5c6ac4;">
+      Please enter the 6-digit code sent to your registered email/phone.
+    </p>
+    <form id="mfa-form" onsubmit="return false;">
+      <input type="text" id="mfa-code" placeholder="Enter 2FA Code" required maxlength="6" pattern="[0-9]{6}" inputmode="numeric" />
+      <button id="mfa-verify-btn" type="button">Verify Code</button>
+      <span id="mfa-error" class="error"></span>
+      <p style="margin-top: 15px;">
+        <a href="#" id="resend-mfa-code">Resend Code</a>
+      </p>
+    </form>
+  </div>
+
+  <div id="banking-system" class="container hidden">
+    <div class="user-info">
+      Welcome, <span id="current-user"></span>
+      <div>
+        <button id="profile-btn" class="profile-btn">Profile</button>
+        <button id="logout-btn" class="logout-btn">Logout</button>
+      </div>
     </div>
+
+    <h1 class="title">Secure Banking System</h1>
+    <div class="balance-container">
+      <h2>Balance: $<span id="balance">0.00</span></h2>
+    </div>
+
     <div class="transaction-container">
       <h2>Transactions</h2>
-      <form id="deposit-form" onsubmit="return false;">
-        <h3>Deposit</h3>
-        <input type="number" id="deposit-amount" placeholder="Amount" min="1" />
-        <button id="deposit-btn" type="button">Deposit</button>
-        <span id="deposit-error" class="error"></span>
-      </form>
-      <form id="withdraw-form" onsubmit="return false;">
-        <h3>Withdraw</h3>
-        <input type="number" id="withdraw-amount" placeholder="Amount" min="1" />
-        <button id="withdraw-btn" type="button">Withdraw</button>
-        <span id="withdraw-error" class="error"></span>
-      </form>
-      <form id="transfer-form" onsubmit="return false;">
-        <h3>Transfer</h3>
-        <input type="number" id="transfer-amount" placeholder="Amount" min="1" />
-        <input type="text" id="transfer-account" placeholder="Account Number" />
-        <button id="transfer-btn" type="button">Transfer</button>
-        <span id="transfer-error" class="error"></span>
-      </form>
-      <form id="billpay-form" onsubmit="return false;">
-  <h3>Bill Payment</h3>
-  <input type="text" id="billpay-biller" placeholder="Biller Name" />
-  <input type="number" id="billpay-amount" placeholder="Amount" min="1" />
-  <button id="billpay-btn" type="button">Pay Bill</button>
-  <span id="billpay-error" class="error"></span>
-</form>
 
-<form id="checkdeposit-form" onsubmit="return false;">
-  <h3>Deposit Check</h3>
-  <input type="text" id="check-number" placeholder="Check Number" />
-  <input type="number" id="check-amount" placeholder="Amount" min="1" />
-  <button id="checkdeposit-btn" type="button">Deposit Check</button>
-  <span id="checkdeposit-error" class="error"></span>
-</form>
+      <form id="transaction-form" onsubmit="return false;">
+        <h3>Perform Transaction</h3>
+        <select id="transaction-type-select" style="flex-basis: 100%; margin-bottom: 10px;">
+          <option value="deposit">Deposit</option>
+          <option value="withdraw">Withdraw</option>
+          <option value="transfer">Transfer</option>
+          <option value="billpay">Bill Payment</option>
+          <option value="credit-card-payment">Credit Card Payment</option>
+          <option value="investment">Investment</option>
+          <option value="check-deposit">Check Deposit</option>
+          <option value="loan-request">Loan Request</option>
+        </select>
 
-<form id="loanrequest-form" onsubmit="return false;">
-  <h3>Request Loan</h3>
-  <input type="number" id="loan-amount" placeholder="Amount" min="1" />
-  <button id="loanrequest-btn" type="button">Request Loan</button>
-  <span id="loanrequest-error" class="error"></span>
-</form>
-<form id="interest-form" onsubmit="return false;">
-  <h3>Calculate Interest</h3>
-  <input type="number" id="interest-rate" placeholder="Interest Rate (%)" min="0" step="0.01" />
-  <button id="interest-btn" type="button">Calculate Interest</button>
-  <span id="interest-error" class="error"></span>
-  <p id="interest-result" style="margin-top:10px; font-weight:600; color:#32418f;"></p>
-</form>
+        <input type="number" id="transaction-amount" placeholder="Amount" min="0.01" step="0.01" required />
+
+        <select id="transaction-category" style="flex-basis: 100%; margin-bottom: 10px;">
+          <option value="">Select Category (Optional)</option>
+          <option value="food">Food</option>
+          <option value="transport">Transport</option>
+          <option value="entertainment">Entertainment</option>
+          <option value="utilities">Utilities</option>
+          <option value="rent">Rent</option>
+          <option value="salary">Salary</option>
+          <option value="shopping">Shopping</option>
+          <option value="health">Health</option>
+          <option value="education">Education</option>
+          <option value="other">Other</option>
+        </select>
+
+        <input type="text" id="transaction-recipient" placeholder="Recipient/Account/Biller Name" class="hidden" />
+        <input type="text" id="transaction-account-number" placeholder="Account Number" class="hidden" />
+        <input type="text" id="transaction-card-number" placeholder="Credit Card Number (Last 4 digits)" class="hidden" maxlength="4" pattern="\d{4}" />
+        <input type="text" id="transaction-investment-type" placeholder="Investment Type (e.g., Stocks, Mutual Funds)" class="hidden" />
+        <input type="text" id="transaction-check-number" placeholder="Check Number" class="hidden" />
+
+        <button id="execute-transaction-btn" type="button">Execute Transaction</button>
+        <span id="transaction-error" class="error"></span>
+        <span id="transaction-success" class="success"></span>
+      </form>
+
+      <form id="interest-form" onsubmit="return false;">
+        <h3>Calculate Interest</h3>
+        <input type="number" id="interest-rate" placeholder="Interest Rate (%)" min="0" step="0.01" required />
+        <button id="interest-btn" type="button">Calculate Interest</button>
+        <span id="interest-error" class="error"></span>
+        <p id="interest-result" style="margin-top:10px; font-weight:600; color:#32418f;"></p>
+      </form>
+    </div>
+
+    <div class="budget-container history-container">
+        <h2>Budgeting</h2>
+        <form id="set-budget-form" onsubmit="return false;" style="margin-bottom: 20px;">
+            <select id="budget-category-select" style="flex-basis: 48%;">
+                <option value="">Select Category</option>
+                <option value="food">Food</option>
+                <option value="transport">Transport</option>
+                <option value="entertainment">Entertainment</option>
+                <option value="utilities">Utilities</option>
+                <option value="rent">Rent</option>
+                <option value="shopping">Shopping</option>
+                <option value="health">Health</option>
+                <option value="education">Education</option>
+                <option value="other">Other</option>
+            </select>
+            <input type="number" id="budget-amount-input" placeholder="Budget Amount" min="0.01" step="0.01" style="flex-basis: 48%;" />
+            <button id="set-budget-btn" type="button" style="flex-basis: 100%;">Set Budget</button>
+            <span id="budget-error" class="error"></span>
+            <span id="budget-success" class="success"></span>
+        </form>
+        <h3>Your Budgets & Spending:</h3>
+        <ul id="budget-list">
+            <li>No budgets set yet.</li>
+        </ul>
     </div>
     <div class="history-container">
       <h2>Transaction History</h2>
@@ -269,170 +299,690 @@ ul#transaction-history::-webkit-scrollbar-thumb {
     </div>
   </div>
 
+  <div id="profile-screen" class="container hidden">
+    <h1 class="profile-title">User Profile</h1>
+    <form id="profile-form" onsubmit="return false;">
+      <label for="profile-username" style="text-align: left; width: 100%; margin-bottom: 5px; font-weight: 600;">Username:</label>
+      <input type="text" id="profile-username" readonly />
+
+      <label for="profile-email" style="text-align: left; width: 100%; margin-bottom: 5px; font-weight: 600; margin-top: 15px;">Email:</label>
+      <input type="email" id="profile-email" placeholder="Email Address" required />
+
+      <label for="profile-mfa-status" style="text-align: left; width: 100%; margin-bottom: 5px; font-weight: 600; margin-top: 15px;">Two-Factor Authentication:</label>
+      <select id="profile-mfa-status" style="width: 100%; margin-bottom: 15px;">
+        <option value="disabled">Disabled</option>
+        <option value="enabled">Enabled</option>
+      </select>
+
+      <button id="update-profile-btn" type="button">Update Profile</button>
+      <button id="change-password-btn" type="button" style="background-color: #f39c12; margin-top: 10px;">Change Password</button>
+      <span id="profile-error" class="error"></span>
+      <span id="profile-success" class="success"></span>
+    </form>
+    <button id="back-to-banking" class="cancel-btn" style="width: 100%; margin-top: 20px;">Back to Banking</button>
+  </div>
+  <div id="chatbot-container" class="chatbot-container hidden">
+    <div class="chatbot-header">
+      <h2>BankBot Assistant</h2>
+      <button id="close-chatbot-btn" class="close-chatbot-btn">&times;</button>
+    </div>
+    <div class="chatbot-messages" id="chatbot-messages">
+      <div class="message bot-message">Hi there! How can I help you today?</div>
+    </div>
+    <div class="chatbot-input">
+      <input type="text" id="chatbot-input-field" placeholder="Ask me a question..." />
+      <button id="chatbot-send-btn">Send</button>
+    </div>
+  </div>
+
+  <div id="change-password-modal" class="modal hidden">
+    <div class="modal-content">
+      <h3>Change Password</h3>
+      <form id="change-password-form" onsubmit="return false;">
+        <input type="password" id="current-password" placeholder="Current Password" required />
+        <input type="password" id="new-password" placeholder="New Password" required minlength="8" />
+        <input type="password" id="new-password-confirm" placeholder="Confirm New Password" required />
+        <button id="save-password-btn" type="button">Save New Password</button>
+        <span id="change-password-error" class="error"></span>
+      </form>
+      <button id="cancel-password-change" class="cancel-btn" style="margin-top: 10px;">Cancel</button>
+    </div>
+  </div>
+
+  <div id="confirmation-modal" class="modal hidden">
+    <div class="modal-content">
+      <h3 id="modal-title">Confirm Transaction</h3>
+      <p id="modal-message"></p>
+      <div class="modal-buttons">
+        <button id="confirm-btn" class="confirm-btn">Confirm</button>
+        <button id="cancel-btn" class="cancel-btn">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="notification" class="notification"></div>
+
   <script>
-    let balance = 1000;
-    let transactionHistory = [];
+    // --- Security Warning: This client-side JS is for demonstration only! ---
+    // In a real banking system, ALL sensitive logic (user authentication,
+    // transaction processing, balance updates, 2FA code generation/verification,
+    // password changes, user registration, data storage) MUST be handled on a
+    // SECURE SERVER-SIDE backend. Storing user data, balances, and passwords
+    // in client-side localStorage and performing operations solely in JS is
+    // highly insecure and vulnerable to various attacks.
+    // The simpleEncrypt/Decrypt functions are NOT for real security; they are
+    // merely to prevent casual viewing in localStorage for this demo.
+    // --- End Security Warning ---
+    const SECRET_KEY = 'super-secret-banking-key-2024-demo'; // Still not truly secure, just for obfuscation
 
-    const balanceEl = document.getElementById('balance');
-    const depositError = document.getElementById('deposit-error');
-    const withdrawError = document.getElementById('withdraw-error');
-    const transferError = document.getElementById('transfer-error');
-    const transactionHistoryEl = document.getElementById('transaction-history');
-    const interestError = document.getElementById('interest-error');
-const interestResult = document.getElementById('interest-result');
-
-document.getElementById('interest-btn').addEventListener('click', () => {
-  interestError.textContent = '';
-  interestResult.textContent = '';
-  const rate = parseFloat(document.getElementById('interest-rate').value);
-  if (isNaN(rate) || rate < 0) {
-    interestError.textContent = 'Invalid interest rate';
-    return;
-  }
-  // Calculate interest for 1 year on current balance
-  const interest = (balance * rate) / 100;
-  const newBalance = balance + interest;
-  interestResult.textContent = `Interest: $${interest.toFixed(2)} | New Balance: $${newBalance.toFixed(2)}`;
-});
-    function updateBalance() {
-      balanceEl.textContent = balance.toFixed(2);
+    // --- Simulated Hashing (FOR DEMO ONLY - NOT SECURE FOR PRODUCTION) ---
+    // In a real application, you would use a robust server-side hashing library
+    // like bcrypt or Argon2 to hash passwords securely, along with unique salts.
+    // This is a simple, client-side simulation for concept demonstration.
+    async function hashPassword(password) {
+      // Simulate a computationally intensive hash (e.g., Argon2 or bcrypt)
+      // In a real scenario, this would be done on the server.
+      // For this client-side demo, we'll just use a simple, slightly more
+      // complex 'encryption' than just XOR, to represent a "hash".
+      // A real hash would be one-way and irreversible.
+      const textEncoder = new TextEncoder();
+      const data = textEncoder.encode(password + SECRET_KEY); // Adding SECRET_KEY as a "salt" for this demo
+      const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+      const hashArray = Array.from(new Uint8Array(hashBuffer));
+      const hashedPassword = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+      return hashedPassword;
     }
-function updateTransactionHistory() {
-      transactionHistoryEl.innerHTML = '';
-      transactionHistory.forEach(t => {
+
+    async function comparePassword(inputPassword, storedHash) {
+      // Re-hash the input password with the same "salt" (SECRET_KEY)
+      const inputHash = await hashPassword(inputPassword);
+      return inputHash === storedHash;
+    }
+
+    // Simple encryption/decryption for localStorage (for demo purposes)
+    function simpleEncrypt(text) {
+      let result = '';
+      for (let i = 0; i < text.length; i++) {
+        result += String.fromCharCode(text.charCodeAt(i) ^ SECRET_KEY.charCodeAt(i % SECRET_KEY.length));
+      }
+      return btoa(result);
+    }
+
+    function simpleDecrypt(encrypted) {
+      try {
+        const text = atob(encrypted);
+        let result = '';
+        for (let i = 0; i < text.length; i++) {
+          result += String.fromCharCode(text.charCodeAt(i) ^ SECRET_KEY.charCodeAt(i % SECRET_KEY.length));
+        }
+        return result;
+      } catch (e) {
+        console.error("Decryption failed:", e);
+        return null; // Return null on decryption failure
+      }
+    }
+
+    // User management (simulated on client-side)
+    let users = {}; // Will be loaded from localStorage
+    let currentUser = null;
+    let pendingMFAUser = null; // To store username during MFA flow
+
+    // Load users from localStorage
+    async function loadUsers() {
+      const storedUsers = localStorage.getItem('bankingUsers');
+      if (storedUsers) {
+        try {
+          const decryptedUsers = simpleDecrypt(storedUsers);
+          if (decryptedUsers) {
+            const parsedUsers = JSON.parse(decryptedUsers);
+            users = parsedUsers;
+            // Ensure new properties exist for old users
+            for (const username in users) {
+                if (!users[username].transactions) users[username].transactions = [];
+                if (!users[username].mfaEnabled) users[username].mfaEnabled = false;
+                if (!users[username].mfaCode) users[username].mfaCode = null;
+                if (!users[username].budgets) users[username].budgets = {}; // Initialize budgets
+            }
+          } else {
+            console.warn('Could not decrypt user data. Starting with empty users.');
+            users = {};
+          }
+        } catch (e) {
+          console.error('Error parsing stored users data:', e);
+          users = {}; // Fallback to empty if parsing fails
+        }
+      }
+      // Add default admin user if no users exist (for first run)
+      if (Object.keys(users).length === 0 || !users['admin']) { // Check if 'admin' specifically doesn't exist
+          const defaultPasswordHash = await hashPassword('password123'); // Hash default password
+          users['admin'] = {
+              password: defaultPasswordHash, // Store hashed password
+              email: 'admin@example.com',
+              balance: 1000,
+              transactions: [],
+              mfaEnabled: false,
+              mfaCode: null,
+              budgets: {}
+          };
+          saveUsers(); // Save default user immediately
+      }
+    }
+
+    // Save users to localStorage
+    function saveUsers() {
+      const encryptedUsers = simpleEncrypt(JSON.stringify(users));
+      localStorage.setItem('bankingUsers', encryptedUsers);
+    }
+
+    // Show notification
+    function showNotification(message, type = 'success') {
+      const notification = document.getElementById('notification');
+      notification.textContent = message;
+      notification.className = `notification ${type}`;
+      notification.classList.add('show');
+
+      setTimeout(() => {
+        notification.classList.remove('show');
+      }, 3000);
+    }
+
+    // Clear form messages
+    function clearMessages() {
+      document.querySelectorAll('.error, .success').forEach(el => el.textContent = '');
+    }
+
+    // Update balance display
+    function updateBalance() {
+      if (currentUser && users[currentUser]) {
+        document.getElementById('balance').textContent = users[currentUser].balance.toFixed(2);
+      }
+    }
+
+    // Add transaction to history (now includes category)
+    function addTransaction(type, amount, details = '', category = '') {
+      if (!currentUser || !users[currentUser]) return;
+
+      const transaction = {
+        type, amount, details, timestamp: new Date().toLocaleString(),
+        balance: users[currentUser].balance, // Record balance after transaction
+        category: category || 'uncategorized' // Store category
+      };
+
+      users[currentUser].transactions.unshift(transaction); // Add to the beginning
+      saveUsers();
+      updateTransactionHistory();
+      updateBudgetDisplay(); // Update budget display after new transaction
+    }
+
+    // Update transaction history display (now shows category)
+    function updateTransactionHistory() {
+      if (!currentUser || !users[currentUser]) return;
+
+      const historyList = document.getElementById('transaction-history');
+      historyList.innerHTML = '';
+
+      if (users[currentUser].transactions.length === 0) {
+          historyList.innerHTML = '<li>No transactions yet.</li>';
+          return;
+      }
+
+      users[currentUser].transactions.forEach(transaction => {
         const li = document.createElement('li');
-        li.textContent = t;
-        transactionHistoryEl.appendChild(li);
+        const sign = transaction.amount >= 0 ? '' : '-';
+        const displayAmount = Math.abs(transaction.amount).toFixed(2);
+        const categoryDisplay = transaction.category && transaction.category !== 'uncategorized'
+                                ? ` | Category: ${transaction.category.charAt(0).toUpperCase() + transaction.category.slice(1)}` : '';
+        li.innerHTML = `
+          <strong>${transaction.type}</strong> ${sign}$${displayAmount}
+          ${transaction.details ? ` (${transaction.details})` : ''}
+          ${categoryDisplay}
+          <br><small>${transaction.timestamp} - Balance: $${transaction.balance.toFixed(2)}</small>
+        `;
+        historyList.appendChild(li);
       });
     }
 
-    document.getElementById('deposit-btn').addEventListener('click', () => {
-      const amount = parseFloat(document.getElementById('deposit-amount').value);
-      depositError.textContent = '';
-      if (isNaN(amount) || amount <= 0) {
-        depositError.textContent = 'Invalid amount';
-        return;
+    // Show confirmation modal
+    function showConfirmation(title, message, onConfirm) {
+      document.getElementById('modal-title').textContent = title;
+      document.getElementById('modal-message').textContent = message;
+      document.getElementById('confirmation-modal').classList.remove('hidden');
+
+      const confirmBtn = document.getElementById('confirm-btn');
+      confirmBtn.onclick = () => {
+        document.getElementById('confirmation-modal').classList.add('hidden');
+        onConfirm();
+      };
+    }
+
+    // Hide confirmation modal
+    document.getElementById('cancel-btn').onclick = () => {
+      document.getElementById('confirmation-modal').classList.add('hidden');
+    };
+    // --- Screen Management Functions ---
+    function showScreen(screenId) {
+      document.querySelectorAll('.login-container, .register-container, .mfa-container, .container').forEach(screen => {
+        screen.classList.add('hidden');
+      });
+      document.getElementById(screenId).classList.remove('hidden');
+    }
+
+    function resetForms() {
+        document.getElementById('login-form').reset();
+        document.getElementById('register-form').reset();
+        document.getElementById('mfa-form').reset();
+        document.getElementById('transaction-form').reset();
+        document.getElementById('interest-form').reset();
+        if (document.getElementById('profile-form')) document.getElementById('profile-form').reset(); // Check if element exists
+        if (document.getElementById('set-budget-form')) document.getElementById('set-budget-form').reset(); // Reset budget form
+        clearMessages();
+    }
+
+    // --- Authentication Event Listeners ---
+    document.getElementById('login-btn').addEventListener('click', async () => { // Made async
+      const username = document.getElementById('username-login').value.trim();
+      const password = document.getElementById('password-login').value;
+      const loginError = document.getElementById('login-error');
+      loginError.textContent = '';
+
+      if (!username || !password) { loginError.textContent = 'Please enter both username and password.'; return; }
+
+      if (users[username]) {
+        const isPasswordCorrect = await comparePassword(password, users[username].password); // Await password comparison
+        if (isPasswordCorrect) {
+            if (users[username].mfaEnabled) {
+                pendingMFAUser = username;
+                const mfaCode = Math.floor(100000 + Math.random() * 900000).toString();
+                users[username].mfaCode = mfaCode;
+                saveUsers();
+                showNotification(`MFA code sent (simulated): ${mfaCode}`, 'info');
+                showScreen('mfa-screen');
+            } else {
+                currentUser = username;
+                showScreen('banking-system');
+                document.getElementById('current-user').textContent = username;
+                updateBalance();
+                updateTransactionHistory();
+                updateBudgetDisplay(); // Update budget display on login
+                showNotification('Login successful!', 'success');
+            }
+        } else {
+            loginError.textContent = 'Invalid username or password.';
+            showNotification('Login failed!', 'error');
+        }
+      } else {
+        loginError.textContent = 'Invalid username or password.';
+        showNotification('Login failed!', 'error');
       }
-      balance += amount;
-      transactionHistory.push(`Deposited: $${amount.toFixed(2)}`);
-      updateBalance();
-      updateTransactionHistory();
-      document.getElementById('deposit-amount').value = '';
     });
 
-    document.getElementById('withdraw-btn').addEventListener('click', () => {
-      const amount = parseFloat(document.getElementById('withdraw-amount').value);
-      withdrawError.textContent = '';
-      if (isNaN(amount) || amount <= 0) {
-        withdrawError.textContent = 'Invalid amount';
-        return;
-      }
-      if (amount > balance) {
-        withdrawError.textContent = 'Insufficient funds';
-        return;
-      }
-      balance -= amount;
-      transactionHistory.push(`Withdrawn: $${amount.toFixed(2)}`);
-      updateBalance();
-      updateTransactionHistory();
-      document.getElementById('withdraw-amount').value = '';
+    document.getElementById('mfa-verify-btn').addEventListener('click', () => {
+        const mfaCodeInput = document.getElementById('mfa-code').value.trim();
+        const mfaError = document.getElementById('mfa-error');
+        mfaError.textContent = '';
+
+        if (!mfaCodeInput) { mfaError.textContent = 'Please enter the 2FA code.'; return; }
+
+        if (pendingMFAUser && users[pendingMFAUser] && users[pendingMFAUser].mfaCode === mfaCodeInput) {
+            currentUser = pendingMFAUser; pendingMFAUser = null; users[currentUser].mfaCode = null; saveUsers();
+            showScreen('banking-system'); document.getElementById('current-user').textContent = currentUser;
+            updateBalance(); updateTransactionHistory(); updateBudgetDisplay(); // Update budget display on MFA success
+            showNotification('2FA successful! Welcome.', 'success');
+            document.getElementById('mfa-form').reset();
+        } else { mfaError.textContent = 'Invalid 2FA code.'; showNotification('2FA failed!', 'error'); }
     });
 
-    document.getElementById('transfer-btn').addEventListener('click', () => {
-      const amount = parseFloat(document.getElementById('transfer-amount').value);
-      const accountNumber = document.getElementById('transfer-account').value.trim();
-      transferError.textContent = '';
-      if (isNaN(amount) || amount <= 0) {
-        transferError.textContent = 'Invalid amount';
-        return;
-      }
-      if (!accountNumber) {
-        transferError.textContent = 'Account number required';
-        return;
-      }
-      if (amount > balance) {
-        transferError.textContent = 'Insufficient funds';
-        return;
-      }
-      balance -= amount;
-      transactionHistory.push(`Transferred $${amount.toFixed(2)} to account ${accountNumber}`);
-      updateBalance();
-      updateTransactionHistory();
-      document.getElementById('transfer-amount').value = '';
-      document.getElementById('transfer-account').value = '';
+    document.getElementById('resend-mfa-code').addEventListener('click', (e) => {
+        e.preventDefault();
+        if (pendingMFAUser && users[pendingMFAUser]) {
+            const mfaCode = Math.floor(100000 + Math.random() * 900000).toString();
+            users[pendingMFAUser].mfaCode = mfaCode; saveUsers();
+            showNotification(`New MFA code sent (simulated): ${mfaCode}`, 'info');
+        } else { showNotification('No pending login for MFA.', 'error'); showScreen('login-screen'); }
     });
-    document.getElementById('billpay-btn').addEventListener('click', () => {
-  const biller = document.getElementById('billpay-biller').value.trim();
-  const amount = parseFloat(document.getElementById('billpay-amount').value);
-  const error = document.getElementById('billpay-error');
-  error.textContent = '';
 
-  if (!biller) {
-    error.textContent = 'Biller name required';
-    return;
-  }
-  if (isNaN(amount) || amount <= 0) {
-    error.textContent = 'Invalid amount';
-    return;
-  }
-  if (amount > balance) {
-    error.textContent = 'Insufficient funds';
-    return;
-  }
+    document.getElementById('show-register').addEventListener('click', (e) => { e.preventDefault(); showScreen('register-screen'); resetForms(); });
+    document.getElementById('show-login').addEventListener('click', (e) => { e.preventDefault(); showScreen('login-screen'); resetForms(); });
 
-  balance -= amount;
-  transactionHistory.push(`Paid bill of $${amount.toFixed(2)} to ${biller}`);
-  updateBalance();
-  updateTransactionHistory();
+    document.getElementById('register-btn').addEventListener('click', async () => { // Made async
+      const username = document.getElementById('username-register').value.trim();
+      const email = document.getElementById('email-register').value.trim();
+      const password = document.getElementById('password-register').value;
+      const confirmPassword = document.getElementById('password-confirm').value;
+      const registerError = document.getElementById('register-error');
+      registerError.textContent = '';
 
-  document.getElementById('billpay-biller').value = '';
-  document.getElementById('billpay-amount').value = '';
-});
+      if (!username || !email || !password || !confirmPassword) { registerError.textContent = 'All fields are required.'; return; }
+      if (password.length < 8) { registerError.textContent = 'Password must be at least 8 characters long.'; return; }
+      if (password !== confirmPassword) { registerError.textContent = 'Passwords do not match.'; return; }
+      if (users[username]) { registerError.textContent = 'Username already exists.'; return; }
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { registerError.textContent = 'Please enter a valid email address.'; return; }
 
-document.getElementById('checkdeposit-btn').addEventListener('click', () => {
-  const checkNumber = document.getElementById('check-number').value.trim();
-  const amount = parseFloat(document.getElementById('check-amount').value);
-  const error = document.getElementById('checkdeposit-error');
-  error.textContent = '';
+      const hashedPassword = await hashPassword(password); // Hash password before storing
 
-  if (!checkNumber) {
-    error.textContent = 'Check number required';
-    return;
-  }
-  if (isNaN(amount) || amount <= 0) {
-    error.textContent = 'Invalid amount';
-    return;
-  }
+      users[username] = { password: hashedPassword, email: email, balance: 0, transactions: [], mfaEnabled: false, mfaCode: null, budgets: {} };
+      saveUsers();
+      showNotification('Registration successful! Please log in.', 'success');
+      showScreen('login-screen');
+      document.getElementById('register-form').reset();
+    });
 
-  balance += amount;
-  transactionHistory.push(`Deposited check #${checkNumber} for $${amount.toFixed(2)}`);
-  updateBalance();
-  updateTransactionHistory();
+    document.getElementById('logout-btn').addEventListener('click', () => {
+      showConfirmation('Confirm Logout', 'Are you sure you want to log out?', () => {
+        currentUser = null; pendingMFAUser = null; showScreen('login-screen'); resetForms();
+        showNotification('Logged out successfully!', 'success');
+      });
+    });
+    // --- Profile Management Event Listeners ---
+    document.getElementById('profile-btn').addEventListener('click', () => {
+        if (currentUser && users[currentUser]) {
+            document.getElementById('profile-username').value = currentUser;
+            document.getElementById('profile-email').value = users[currentUser].email;
+            document.getElementById('profile-mfa-status').value = users[currentUser].mfaEnabled ? 'enabled' : 'disabled';
+            showScreen('profile-screen'); clearMessages();
+        }
+    });
 
-  document.getElementById('check-number').value = '';
-  document.getElementById('check-amount').value = '';
-});
+    document.getElementById('update-profile-btn').addEventListener('click', () => {
+        if (!currentUser || !users[currentUser]) return;
 
-document.getElementById('loanrequest-btn').addEventListener('click', () => {
-  const amount = parseFloat(document.getElementById('loan-amount').value);
-  const error = document.getElementById('loanrequest-error');
-  error.textContent = '';
+        const email = document.getElementById('profile-email').value.trim();
+        const mfaStatus = document.getElementById('profile-mfa-status').value === 'enabled';
+        const profileError = document.getElementById('profile-error');
+        const profileSuccess = document.getElementById('profile-success');
+        profileError.textContent = ''; profileSuccess.textContent = '';
 
-  if (isNaN(amount) || amount <= 0) {
-    error.textContent = 'Invalid amount';
-    return;
-  }
+        if (!email) { profileError.textContent = 'Email is required.'; return; }
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { profileError.textContent = 'Please enter a valid email address.'; return; }
 
-  // For simplicity, just add the loan amount to balance immediately
-  balance += amount;
-  transactionHistory.push(`Loan requested and credited: $${amount.toFixed(2)}`);
-  updateBalance();
-  updateTransactionHistory();
+        users[currentUser].email = email; users[currentUser].mfaEnabled = mfaStatus; saveUsers();
+        showNotification('Profile updated!', 'success');
+        profileSuccess.textContent = 'Profile updated successfully!';
+    });
 
-  document.getElementById('loan-amount').value = '';
-});
-updateBalance();
- 
+    document.getElementById('change-password-btn').addEventListener('click', () => {
+        document.getElementById('change-password-modal').classList.remove('hidden');
+        document.getElementById('change-password-form').reset();
+        document.getElementById('change-password-error').textContent = '';
+    });
+
+    document.getElementById('cancel-password-change').addEventListener('click', () => {
+        document.getElementById('change-password-modal').classList.add('hidden');
+    });
+
+    document.getElementById('save-password-btn').addEventListener('click', async () => { // Made async
+        if (!currentUser || !users[currentUser]) return;
+
+        const currentPassword = document.getElementById('current-password').value;
+        const newPassword = document.getElementById('new-password').value;
+        const newPasswordConfirm = document.getElementById('new-password-confirm').value;
+        const passwordError = document.getElementById('change-password-error');
+        passwordError.textContent = '';
+
+        const isCurrentPasswordCorrect = await comparePassword(currentPassword, users[currentUser].password); // Await comparison
+
+        if (!currentPassword || !newPassword || !newPasswordConfirm) { passwordError.textContent = 'All fields are required.'; return; }
+        if (!isCurrentPasswordCorrect) { passwordError.textContent = 'Current password is incorrect.'; return; }
+        if (newPassword.length < 8) { passwordError.textContent = 'New password must be at least 8 characters long.'; return; }
+        if (newPassword !== newPasswordConfirm) { passwordError.textContent = 'New passwords do not match.'; return; }
+        if (newPassword === currentPassword) { passwordError.textContent = 'New password cannot be the same as the current password.'; return; }
+
+        users[currentUser].password = await hashPassword(newPassword); // Hash and store new password
+        saveUsers();
+        showNotification('Password changed successfully!', 'success');
+        document.getElementById('change-password-modal').classList.add('hidden');
+        document.getElementById('profile-success').textContent = 'Password changed successfully!';
+    });
+
+    document.getElementById('back-to-banking').addEventListener('click', () => { showScreen('banking-system'); clearMessages(); });
+    // --- Dynamic Transaction Form Fields ---
+    const transactionTypeSelect = document.getElementById('transaction-type-select');
+    const transactionRecipient = document.getElementById('transaction-recipient');
+    const transactionAccountNumber = document.getElementById('transaction-account-number');
+    const transactionCardNumber = document.getElementById('transaction-card-number');
+    const transactionInvestmentType = document.getElementById('transaction-investment-type');
+    const transactionCheckNumber = document.getElementById('transaction-check-number');
+    const transactionCategory = document.getElementById('transaction-category'); // New: Category Select
+
+    function updateTransactionFormFields() {
+        const selectedType = transactionTypeSelect.value;
+        [transactionRecipient, transactionAccountNumber, transactionCardNumber, transactionInvestmentType, transactionCheckNumber].forEach(el => {
+            el.classList.add('hidden'); el.removeAttribute('required'); el.value = '';
+        });
+
+        // Hide category for deposit and loan request as they are income-like
+        if (selectedType === 'deposit' || selectedType === 'loan-request' || selectedType === 'check-deposit') {
+            transactionCategory.classList.add('hidden');
+            transactionCategory.value = ''; // Clear category selection
+        } else {
+            transactionCategory.classList.remove('hidden');
+        }
+
+        switch (selectedType) {
+            case 'transfer':
+                transactionRecipient.classList.remove('hidden'); transactionRecipient.setAttribute('placeholder', 'Recipient Name'); transactionRecipient.setAttribute('required', 'required');
+                transactionAccountNumber.classList.remove('hidden'); transactionAccountNumber.setAttribute('placeholder', 'Recipient Account Number'); transactionAccountNumber.setAttribute('required', 'required');
+                break;
+            case 'billpay':
+                transactionRecipient.classList.remove('hidden'); transactionRecipient.setAttribute('placeholder', 'Biller Name'); transactionRecipient.setAttribute('required', 'required');
+                break;
+            case 'credit-card-payment':
+                transactionCardNumber.classList.remove('hidden'); transactionCardNumber.setAttribute('required', 'required');
+                break;
+            case 'investment':
+                transactionInvestmentType.classList.remove('hidden'); transactionInvestmentType.setAttribute('required', 'required');
+                break;
+            case 'check-deposit':
+                transactionCheckNumber.classList.remove('hidden'); transactionCheckNumber.setAttribute('required', 'required');
+                break;
+        }
+    }
+    transactionTypeSelect.addEventListener('change', updateTransactionFormFields);
+    updateTransactionFormFields(); // Call initially
+
+    // --- Consolidated Transaction Execution ---
+    document.getElementById('execute-transaction-btn').addEventListener('click', () => {
+        const type = transactionTypeSelect.value;
+        const amount = parseFloat(document.getElementById('transaction-amount').value);
+        const category = transactionCategory.value; // Get selected category
+        const errorSpan = document.getElementById('transaction-error');
+        const successSpan = document.getElementById('transaction-success');
+        errorSpan.textContent = ''; successSpan.textContent = '';
+
+        if (isNaN(amount) || amount <= 0) { errorSpan.textContent = 'Invalid amount.'; return; }
+        if (amount > users[currentUser].balance && (type !== 'deposit' && type !== 'check-deposit' && type !== 'loan-request')) { errorSpan.textContent = 'Insufficient funds.'; return; }
+
+        // For outgoing transactions, if category is visible and not selected, prompt user
+        if (type !== 'deposit' && type !== 'loan-request' && type !== 'check-deposit' && transactionCategory.classList.contains('hidden') === false && !category) {
+            errorSpan.textContent = 'Please select a category for this transaction.';
+            return;
+        }
+
+        let transactionDetails = ''; let confirmationMessage = ''; let confirmAction = () => {};
+
+        switch (type) {
+            case 'deposit': confirmationMessage = `Deposit $${amount.toFixed(2)} to your account?`; confirmAction = () => { users[currentUser].balance += amount; addTransaction('Deposit', amount, '', 'income'); successSpan.textContent = 'Deposit successful!'; }; break;
+            case 'withdraw': confirmationMessage = `Withdraw $${amount.toFixed(2)} from your account?`; confirmAction = () => { users[currentUser].balance -= amount; addTransaction('Withdrawal', -amount, '', category); successSpan.textContent = 'Withdrawal successful!'; }; break;
+            case 'transfer':
+                const recipientName = transactionRecipient.value.trim(); const accountNumber = transactionAccountNumber.value.trim();
+                if (!recipientName || !accountNumber) { errorSpan.textContent = 'Recipient name and account number are required.'; return; }
+                transactionDetails = `to ${recipientName} (Acc: ${accountNumber})`; confirmationMessage = `Transfer $${amount.toFixed(2)} to ${recipientName}'s account (${accountNumber})?`;
+                confirmAction = () => { users[currentUser].balance -= amount; addTransaction('Transfer', -amount, transactionDetails, category); successSpan.textContent = 'Transfer successful!'; }; break;
+            case 'billpay':
+                const billerName = transactionRecipient.value.trim();
+                if (!billerName) { errorSpan.textContent = 'Biller name is required.'; return; }
+                transactionDetails = `to ${billerName}`; confirmationMessage = `Pay $${amount.toFixed(2)} to ${billerName}?`;
+                confirmAction = () => { users[currentUser].balance -= amount; addTransaction('Bill Payment', -amount, transactionDetails, category); successSpan.textContent = 'Bill payment successful!'; }; break;
+            case 'credit-card-payment':
+                const cardNumber = transactionCardNumber.value.trim();
+                if (!cardNumber || !/^\d{4}$/.test(cardNumber)) { errorSpan.textContent = 'Credit card last 4 digits are required and must be 4 digits.'; return; }
+                transactionDetails = `to Credit Card (ending ${cardNumber})`; confirmationMessage = `Make a credit card payment of $${amount.toFixed(2)} for card ending ${cardNumber}?`;
+                confirmAction = () => { users[currentUser].balance -= amount; addTransaction('Credit Card Payment', -amount, transactionDetails, category); successSpan.textContent = 'Credit card payment successful!'; }; break;
+            case 'investment':
+                const investmentType = transactionInvestmentType.value.trim();
+                if (!investmentType) { errorSpan.textContent = 'Investment type is required.'; return; }
+                transactionDetails = `in ${investmentType}`; confirmationMessage = `Invest $${amount.toFixed(2)} in ${investmentType}?`;
+                confirmAction = () => { users[currentUser].balance -= amount; addTransaction('Investment', -amount, transactionDetails, category); successSpan.textContent = 'Investment successful!'; }; break;
+            case 'check-deposit':
+                const checkNum = transactionCheckNumber.value.trim();
+                if (!checkNum) { errorSpan.textContent = 'Check number is required.'; return; }
+                transactionDetails = `check #${checkNum}`; confirmationMessage = `Deposit check #${checkNum} for $${amount.toFixed(2)}?`;
+                confirmAction = () => { users[currentUser].balance += amount; addTransaction('Check Deposit', amount, transactionDetails, 'income'); successSpan.textContent = 'Check deposit successful!'; }; break;
+            case 'loan-request': confirmationMessage = `Request loan of $${amount.toFixed(2)}? (Approval subject to bank policy)`; confirmAction = () => { users[currentUser].balance += amount; addTransaction('Loan Granted', amount, '', 'income'); successSpan.textContent = 'Loan request approved!'; }; break;
+            default: errorSpan.textContent = 'Unknown transaction type.'; return;
+        }
+        showConfirmation('Confirm Transaction', confirmationMessage, () => {
+            confirmAction(); updateBalance(); document.getElementById('transaction-amount').value = '';
+            document.getElementById('transaction-form').reset(); updateTransactionFormFields(); showNotification(`${type} successful!`, 'success');
+        });
+    });
+
+    // --- Interest Calculation ---
+    document.getElementById('interest-btn').addEventListener('click', () => {
+      const rate = parseFloat(document.getElementById('interest-rate').value);
+      const interestError = document.getElementById('interest-error');
+      const interestResult = document.getElementById('interest-result');
+      interestError.textContent = ''; interestResult.textContent = '';
+
+      if (isNaN(rate) || rate < 0) { interestError.textContent = 'Invalid interest rate.'; return; }
+      if (!currentUser || !users[currentUser]) { interestError.textContent = 'Please log in to calculate interest.'; return; }
+
+      const interest = (users[currentUser].balance * rate) / 100;
+      const newBalance = users[currentUser].balance + interest;
+      interestResult.textContent = `Calculated Interest: $${interest.toFixed(2)} | Balance after Interest: $${newBalance.toFixed(2)}`;
+      showNotification('Interest calculated successfully!', 'success');
+    });
+
+
+    // --- Budgeting Features ---
+    document.getElementById('set-budget-btn').addEventListener('click', () => {
+        if (!currentUser || !users[currentUser]) {
+            document.getElementById('budget-error').textContent = 'Please log in to set budgets.';
+            return;
+        }
+        const category = document.getElementById('budget-category-select').value;
+        const amount = parseFloat(document.getElementById('budget-amount-input').value);
+        const budgetError = document.getElementById('budget-error');
+        const budgetSuccess = document.getElementById('budget-success');
+        budgetError.textContent = '';
+        budgetSuccess.textContent = '';
+
+        if (!category) { budgetError.textContent = 'Please select a category.'; return; }
+        if (isNaN(amount) || amount <= 0) { budgetError.textContent = 'Invalid budget amount.'; return; }
+
+        users[currentUser].budgets[category] = amount;
+        saveUsers();
+        updateBudgetDisplay();
+        budgetSuccess.textContent = `Budget for ${category.charAt(0).toUpperCase() + category.slice(1)} set to $${amount.toFixed(2)}.`;
+        showNotification('Budget set!', 'success');
+        document.getElementById('set-budget-form').reset();
+    });
+
+    function updateBudgetDisplay() {
+        if (!currentUser || !users[currentUser]) return;
+
+        const budgetList = document.getElementById('budget-list');
+        budgetList.innerHTML = '';
+        const userBudgets = users[currentUser].budgets;
+        const userTransactions = users[currentUser].transactions;
+
+        if (Object.keys(userBudgets).length === 0) {
+            budgetList.innerHTML = '<li>No budgets set yet.</li>';
+            return;
+        }
+
+        for (const category in userBudgets) {
+            const budgetedAmount = userBudgets[category];
+            // Sum up only negative amounts (expenses) for this category
+            const spentAmount = userTransactions
+                .filter(t => t.category === category && t.amount < 0)
+                .reduce((sum, t) => sum + Math.abs(t.amount), 0);
+
+            const remaining = budgetedAmount - spentAmount;
+            const li = document.createElement('li');
+            li.style.color = remaining < 0 ? '#e74c3c' : '#2c3e50'; // Red if over budget
+
+            li.innerHTML = `
+                <strong>${category.charAt(0).toUpperCase() + category.slice(1)}:</strong>
+                Budget: $${budgetedAmount.toFixed(2)},
+                Spent: $${spentAmount.toFixed(2)},
+                Remaining: $${remaining.toFixed(2)}
+                ${remaining < 0 ? ' (OVER BUDGET!)' : ''}
+            `;
+            budgetList.appendChild(li);
+        }
+    }
+
+
+    // --- Chatbot Functionality ---
+    const chatbotContainer = document.getElementById('chatbot-container');
+    const openChatbotBtn = document.createElement('button');
+    openChatbotBtn.id = 'open-chatbot-btn'; openChatbotBtn.className = 'open-chatbot-btn'; openChatbotBtn.innerHTML = '💬';
+    document.body.appendChild(openChatbotBtn);
+
+    const closeChatbotBtn = document.getElementById('close-chatbot-btn');
+    const chatbotMessages = document.getElementById('chatbot-messages');
+    const chatbotInputField = document.getElementById('chatbot-input-field');
+    const chatbotSendBtn = document.getElementById('chatbot-send-btn');
+
+    openChatbotBtn.addEventListener('click', () => {
+        chatbotContainer.classList.remove('hidden'); openChatbotBtn.classList.add('hidden');
+        chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+    });
+
+    closeChatbotBtn.addEventListener('click', () => {
+        chatbotContainer.classList.add('hidden'); openChatbotBtn.classList.remove('hidden');
+    });
+
+    function addMessage(text, sender) {
+        const messageDiv = document.createElement('div');
+        messageDiv.classList.add('message', `${sender}-message`);
+        messageDiv.textContent = text;
+        chatbotMessages.appendChild(messageDiv);
+        chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+    }
+
+    function getChatbotResponse(message) {
+        const lowerCaseMessage = message.toLowerCase();
+        if (lowerCaseMessage.includes('hello') || lowerCaseMessage.includes('hi')) { return 'Hello! How can I assist you with your banking needs?'; }
+        else if (lowerCaseMessage.includes('balance')) { return currentUser && users[currentUser] ? `Your current balance is $${users[currentUser].balance.toFixed(2)}.` : 'Please log in to check your balance.'; }
+        else if (lowerCaseMessage.includes('deposit')) { return 'You can deposit funds using the "Deposit" option in the Transactions section.'; }
+        else if (lowerCaseMessage.includes('withdraw')) { return 'To withdraw money, select the "Withdraw" option under Transactions.'; }
+        else if (lowerCaseMessage.includes('transfer')) { return 'For transfers, use the "Transfer" option in the Transactions section. You\'ll need the recipient\'s name and account number.'; }
+        else if (lowerCaseMessage.includes('mfa') || lowerCaseMessage.includes('two-factor')) { return 'Two-Factor Authentication (2FA) adds an extra layer of security. You can enable or disable it in your User Profile.'; }
+        else if (lowerCaseMessage.includes('password')) { return 'You can change your password in the User Profile section.'; }
+        else if (lowerCaseMessage.includes('contact')) { return 'You can reach customer support at support@securebank.com or call us at 1-800-BANK-NOW (simulated).'; }
+        else if (lowerCaseMessage.includes('hours') || lowerCaseMessage.includes('open')) { return 'Our virtual banking services are available 24/7! For specific branch hours, please check our website (simulated).'; }
+        else if (lowerCaseMessage.includes('thank')) { return 'You\'re welcome! Is there anything else I can help with?'; }
+        else if (lowerCaseMessage.includes('loan')) { return 'To request a loan, select the "Loan Request" option in the Transactions section. Approval is subject to our policies.'; }
+        else if (lowerCaseMessage.includes('bill')) { return 'You can pay bills using the "Bill Payment" option under Transactions. You\'ll need the biller name.'; }
+        else if (lowerCaseMessage.includes('interest')) { return 'You can calculate potential interest on your balance using the "Calculate Interest" section.'; }
+        else if (lowerCaseMessage.includes('budget')) { return 'You can set and track budgets for different spending categories in the "Budgeting" section of your dashboard.'; }
+        else if (lowerCaseMessage.includes('category') || lowerCaseMessage.includes('categorize')) { return 'When making a transaction, you can select a category like Food, Transport, or Entertainment to track your spending.'; }
+        else { return "I'm sorry, I can only provide information on common banking queries. Can you rephrase your question?"; }
+    }
+
+    chatbotSendBtn.addEventListener('click', () => {
+        const message = chatbotInputField.value.trim();
+        if (message) {
+            addMessage(message, 'user'); chatbotInputField.value = '';
+            setTimeout(() => { const botResponse = getChatbotResponse(message); addMessage(botResponse, 'bot'); }, 500);
+        }
+    });
+
+    chatbotInputField.addEventListener('keypress', (e) => { if (e.key === 'Enter') { chatbotSendBtn.click(); } });
+
+    // Enter key support for login and MFA
+    document.getElementById('password-login').addEventListener('keypress', (e) => { if (e.key === 'Enter') { document.getElementById('login-btn').click(); } });
+    document.getElementById('mfa-code').addEventListener('keypress', (e) => { if (e.key === 'Enter') { document.getElementById('mfa-verify-btn').click(); } });
+
+    // --- Core Initialization ---
+    async function init() { // Made async
+      await loadUsers(); // Await loading users as it involves hashing
+      showScreen('login-screen');
+      resetForms();
+    }
+    init();
   </script>
 </body>
 </html>
