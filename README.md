@@ -1,5 +1,8 @@
 Banking System Project 🏦
 
+For output 🎀
+visit here - https://reaishma.github.io/Banking-system-/
+
 Objective 🎯
 
 ✅ The objective of this project is to develop a comprehensive banking system that provides users with a secure and efficient way to manage their financial transactions. The system aims to provide a user-friendly interface for users to perform various banking operations, such as deposits, withdrawals, transfers, and bill payments.
@@ -31,8 +34,6 @@ Outcomes 🏆
 - A user-friendly interface that allows users to perform various banking operations 📈
 - A system that is scalable and maintainable 🔩
   
-For output 🎀
-visit here - https://reaishma.github.io/Banking-system-/
  
 
 Author 👩‍💻
