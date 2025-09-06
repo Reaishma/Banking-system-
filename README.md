@@ -41,17 +41,20 @@
 - A user-friendly interface that allows users to perform various banking operations 📈
 - A system that is scalable and maintainable 🔩
   
- 
+## Chatbot for Banking 
+![chatbot](https://github.com/Reaishma/Banking-system-/blob/main/chrome_screenshot_Sep%206%2C%202025%2011_15_45%20AM%20GMT%2B05_30.png)
 
-Author 👩‍💻
+This chatbot allow users to solve their queries in banking page 
 
-Reaishma N
+## Author 👩‍💻
 
-License 📜
+**Reaishma N**
+
+## License 📜
 
 This project is licensed under the Apache License, Version 2.0. See the LICENSE file for details.
 
-Contributions Guidelines 🤝
+## Contributions Guidelines 🤝
 
 Contributions to this project are welcome. To contribute, please:
 
