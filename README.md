@@ -10,9 +10,11 @@
 ![Overview](https://github.com/Reaishma/Banking-system-/blob/main/chrome_screenshot_Sep%206%2C%202025%2011_12_33%20AM%20GMT%2B05_30.png)
 
 
-Process 🔄
+## Process 🔄
 
-✅ The development of this project involved the following process:
+![user](https://github.com/Reaishma/Banking-system-/blob/main/chrome_screenshot_Sep%206%2C%202025%2011_14_33%20AM%20GMT%2B05_30.png)
+
+### ✅ The development of this project involved the following process:
 
 - Requirements gathering and analysis 📊
 - System design and architecture 🏗️
