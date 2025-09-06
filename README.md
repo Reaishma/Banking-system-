@@ -22,18 +22,20 @@
 - Testing and debugging of the system 🐞
 - Deployment and maintenance of the system 🚀
 
-Skills 💡
+## Skills 💡
 
-✅ The following skills were utilized in the development of this project:
+### ✅ The following skills were utilized in the development of this project:
 
 - Programming languages: JavaScript, HTML, CSS 📚
 - Front-end development: User interface design, client-side scripting 🌐
 - Back-end development: Transaction management, user authentication 🔒
 - Problem-solving: Debugging, troubleshooting 🤔
 
-Outcomes 🏆
+## Outcomes 🏆
 
-✅ The outcomes of this project include:
+![main page](https://github.com/Reaishma/Banking-system-/blob/main/chrome_screenshot_Sep%206%2C%202025%2011_14_54%20AM%20GMT%2B05_30.png)
+
+### ✅ The outcomes of this project include:
 
 - A functional banking system that provides users with a secure and efficient way to manage their financial transactions 💸
 - A user-friendly interface that allows users to perform various banking operations 📈
